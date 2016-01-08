@@ -20,16 +20,16 @@ namespace Analyzer
 
         public IEnumerable<TypeAnalyzer> GetDependencies()
         {
-            //if (methodDefinition.HasBody)
-            //{
-            //    foreach (var instruction in methodDefinition.Body.Instructions)
-            //    {
-            //        if (instruction.OpCode.OperandType == OperandType.InlineType)
-            //        {
-            //            yield return instruction.;
-            //        }
-            //    }
-            //}
+            if (methodDefinition.HasBody)
+            {
+                if (methodDefinition.Body.HasVariables)
+                {
+                    foreach (var variable in methodDefinition.Body.Variables)
+                    {
+                        yield return new TypeAnalyzer(variable.VariableType);
+                    }
+                }
+            }
 
             if (methodDefinition.HasParameters)
             {
