@@ -20,4 +20,11 @@ namespace ConsoleAnalyzer
         [Option("typegraphfile", Default = "graph_type.graphml", HelpText = "File name of the generated type graph")]
         public string TypeGraphFileName { get; set; }
     }
+
+    [Verb("asm", HelpText = "Assembly analysis")]
+    public class AssemblyAnalyzerOptions
+    {
+        [Value(0, Required = true, HelpText = "Path to the entry point (.dll, .exe)")]
+        public string Path { get; set; }
+    }
 }

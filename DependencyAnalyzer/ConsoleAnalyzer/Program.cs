@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using CommandLine;
 using log4net;
 
@@ -12,12 +14,33 @@ namespace ConsoleAnalyzer
         {
             //BasicConfigurator.Configure();
 
-            var result = Parser.Default.ParseArguments<DependecyOptions>(args)
+            var result = Parser.Default.ParseArguments<DependecyOptions, AssemblyAnalyzerOptions>(args)
                 .WithParsed<DependecyOptions>(options =>
                 {
                     var assemblyProcessor = new AssemblyProcessor(options.Path);
                     ProcessAssemblyGraph(options, assemblyProcessor);
                     ProcessTypeGraph(options, assemblyProcessor);
+
+                    Logger.Info("Done.");
+                })
+                .WithParsed<AssemblyAnalyzerOptions>(options =>
+                {
+                    var assemblyProcessor = new AssemblyProcessor(options.Path);
+                    var assembly = assemblyProcessor.Assembly;
+
+                    var info = new Dictionary<string, string>
+                    {
+                        { "Assembly name", assembly.FullyQualifiedName},
+                        { "Architecture", assembly.Module.Architecture.ToString() },
+                        { "Runtime version", assembly.Module.RuntimeVersion },
+                        { "Has resources", assembly.Module.HasResources.ToString() }
+                    };
+
+
+                    foreach (var entry in info)
+                    {
+                        Logger.Info($"{entry.Key}: {entry.Value}");
+                    }
 
                     Logger.Info("Done.");
                 });
