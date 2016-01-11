@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Console Analyzer")]
-[assembly: AssemblyDescription(".NET assembly analyzer")]
+[assembly: AssemblyTitle("Grapher")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ConsoleAnalyzer")]
-[assembly: AssemblyCopyright("Copyright © 2016 Artur Herczeg")]
+[assembly: AssemblyCompany("EPAM Systems")]
+[assembly: AssemblyProduct("Grapher")]
+[assembly: AssemblyCopyright("Copyright © EPAM Systems 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("8476ff6a-03b2-42e3-9740-3a8c649f40ec")]
+[assembly: Guid("9504248b-3787-4f68-a77f-64a8c1effa91")]
 
 // Version information for an assembly consists of the following four values:
 //

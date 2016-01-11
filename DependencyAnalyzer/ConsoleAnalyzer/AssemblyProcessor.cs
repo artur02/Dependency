@@ -1,39 +1,59 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
+using System.Linq;
+using Analyzer;
+using Analyzer.ReturnTypes;
+using Grapher;
+using log4net;
 
 namespace ConsoleAnalyzer
 {
     public class AssemblyProcessor
     {
+        private readonly ILog logger = LogManager.GetLogger(typeof (AssemblyProcessor));
+
         public AssemblyProcessor(string assemblyPath)
         {
-            AssemblyPath = assemblyPath;
-        }
+            logger.Debug($"Parsing assembly: {assemblyPath}");
 
-        private string _assemblyPath;
-
-        public string AssemblyPath
-        {
-            get { return _assemblyPath; }
-            set
+            if (!File.Exists(assemblyPath))
             {
-                if (File.Exists(value))
-                {
-                    _assemblyPath = value;
-                }
-                else
-                {
-                    throw new FileNotFoundException("Cannot find assembly.", value);
-                }
-                
+                throw new FileNotFoundException("Cannot find assembly.", assemblyPath);
             }
+
+            Assembly = new Assembly(assemblyPath, new ComponentCache());
         }
 
-        public void Process()
+        public Assembly Assembly { get; private set; }
+
+        public string GetReferencedAssembliesGraph()
         {
-            Console.WriteLine("Parsing assembly '{0}'", AssemblyPath);
+            var references = Assembly.GetReferences();
+            var g = new AsmReferenceGraphConverter(references);
+            var graph = g.Convert();
+
+            return graph;
         }
 
+        public string GetReferencedTypesGraph()
+        {
+            var types = Assembly.GetTypes();
 
+            var referencedTypes = new TypeReferenceCountDict();
+            var typereferences = types.Select(x => x.GetReferencedTypes()).ToList();
+            foreach (var typeref in typereferences)
+            {
+                foreach (var type in typeref)
+                {
+                    if (!referencedTypes.ContainsKey(type.Key))
+                    {
+                        referencedTypes.Add(type.Key, type.Key.GetReferencedTypes());
+                    }
+                }
+            }
+            var g2 = new TypeReferenceCountDictGraphConverter(referencedTypes);
+            var graph2 = g2.Convert();
+
+            return graph2;
+        }
     }
 }
