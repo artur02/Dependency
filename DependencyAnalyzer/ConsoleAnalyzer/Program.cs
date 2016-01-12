@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using CommandLine;
 using log4net;
@@ -12,8 +11,6 @@ namespace ConsoleAnalyzer
 
         static void Main(string[] args)
         {
-            //BasicConfigurator.Configure();
-
             var result = Parser.Default.ParseArguments<DependecyOptions, AssemblyAnalyzerOptions>(args)
                 .WithParsed<DependecyOptions>(options =>
                 {

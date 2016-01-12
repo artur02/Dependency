@@ -105,9 +105,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AsmReferenceWalker.cs" />
+    <Compile Include="GraphWalkers\AsmReferenceWalker.cs" />
     <Compile Include="Assembly.cs" />
-    <Compile Include="BaseTypeWalker.cs" />
+    <Compile Include="GraphWalkers\BaseTypeWalker.cs" />
     <Compile Include="ComponentCache.cs" />
     <Compile Include="IAssembly.cs" />
     <Compile Include="IType.cs" />

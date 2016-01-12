@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using Analyzer.GraphWalkers;
 using Analyzer.ReturnTypes;
 using Mono.Cecil;
 
@@ -65,7 +66,7 @@ namespace Analyzer
             {
                 foreach (var typeReference in method.GetTypeReferences())
                 {
-                    types.Add(typeReference.Key);
+                    types.Add(typeReference.Key, typeReference.Value);
                 }
             }
 

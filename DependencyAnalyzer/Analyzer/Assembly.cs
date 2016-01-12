@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Reflection;
+using Analyzer.GraphWalkers;
 using log4net;
 using Mono.Cecil;
 

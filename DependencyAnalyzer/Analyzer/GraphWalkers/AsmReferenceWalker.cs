@@ -2,7 +2,7 @@
 using System.Diagnostics.Contracts;
 using Analyzer.ReturnTypes;
 
-namespace Analyzer
+namespace Analyzer.GraphWalkers
 {
     public class AssemblyReferenceWalker
     {

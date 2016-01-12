@@ -2,7 +2,7 @@
 using Analyzer.ReturnTypes;
 using Mono.Cecil;
 
-namespace Analyzer
+namespace Analyzer.GraphWalkers
 {
     [DebuggerDisplay("{type}")]
     public class BaseTypeWalker
