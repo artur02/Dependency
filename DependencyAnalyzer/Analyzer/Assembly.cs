@@ -126,15 +126,6 @@ namespace Analyzer
             return referenceWalker.References;
         }
 
-        public Hashtable GetReferencesAsHashtable(uint recursionLimit = uint.MaxValue)
-        {
-
-            var referencesDict = GetReferences(recursionLimit);
-            var referencesHash = new Hashtable(referencesDict);
-
-            return referencesHash;
-        }
-
         public IEnumerable<IType> GetTypes()
         {
             var types = module.GetTypes();

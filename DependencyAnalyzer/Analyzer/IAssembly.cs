@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Xml.Serialization;
 using Analyzer.ReturnTypes;
@@ -43,13 +42,6 @@ namespace Analyzer
         AsmReference GetReferences(uint recursionLimit);
 
         /// <summary>
-        /// Returns the referenced assemblies recursively as a Hashtable
-        /// </summary>
-        /// <param name="recursionLimit">The number of the followed references</param>
-        /// <returns></returns>
-        Hashtable GetReferencesAsHashtable(uint recursionLimit);
-
-        /// <summary>
         /// Returns the types defined in the assembly
         /// </summary>
         /// <returns>The enumeration of the published types</returns>
@@ -82,14 +74,7 @@ namespace Analyzer
 
             return default(AsmReference);
         }
-
-        public Hashtable GetReferencesAsHashtable(uint recursionLimit)
-        {
-            Contract.Ensures(Contract.Result<Hashtable>() != null);
-
-            return default(Hashtable);
-        }
-
+        
         public IEnumerable<IType> GetTypes()
         {
             Contract.Ensures(Contract.Result<IEnumerable<IType>>() != null);
