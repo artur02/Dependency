@@ -9,6 +9,7 @@ using TestHelpers;
 
 namespace AnalyzerTests
 {
+    [TestFixture(TestOf = typeof(Assembly))]
     public class AssemblyTests
     {
         public class SimpleMethodTests
@@ -16,8 +17,8 @@ namespace AnalyzerTests
             [TestFixture]
             public class WhenIGetTypesDefinedinAnAssembly
             {
-                
                 [TestCase("SimpleMethod.cs", "GeneratedAssemblySimpleMethod.dll", new[] { "<Module>", "Test" })]
+                [TestCase("MethodWithBody.cs", "GeneratedAssemblyMethodWithBody.dll", new[] { "<Module>", "Test" })]
                 public void ThenIShouldGetAllTypesDefined(string fileToBeCompiled, string generatedAssemblyName, IEnumerable<string> expectedTypeNames)
                 {
                     var assembly = GenerateAndLoadAssembly(fileToBeCompiled, generatedAssemblyName);
@@ -36,6 +37,7 @@ namespace AnalyzerTests
             public class WhenIGetAllDependenciesForAType
             {
                 [TestCase("SimpleMethod.cs", "GeneratedAssemblySimpleMethod.dll", new[] { "System.Int32", "System.Object" })]
+                [TestCase("MethodWithBody.cs", "GeneratedAssemblyMethodWithBody.dll", new[] { "System.Int32", "System.Object", "System.String", "System.SByte" })]
                 public void ThenAllDependenciesShouldBeReturned(string fileToBeCompiled, string generatedAssemblyName, IEnumerable<string> expectedTypeNames)
                 {
                     var assembly = GenerateAndLoadAssembly(fileToBeCompiled, generatedAssemblyName);
@@ -51,6 +53,21 @@ namespace AnalyzerTests
                     File.Delete(generatedAssemblyName);
                 }
             }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             protected static Assembly GenerateAndLoadAssembly(string fileName, string generatedAssemblyName)
             {
