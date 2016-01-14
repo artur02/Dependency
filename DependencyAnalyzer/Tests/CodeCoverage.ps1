@@ -13,7 +13,7 @@ if (!(Test-Path CoverageReport)) {
 }
 
 Write-Host "[Debug] Executing OpenCover with nUnit"
-& $openCoverPath -target:$nUnitPath -targetargs:"$nUnitArgs" -register:user -output:CoverageReport/coverage.xml -skipautoprops -filter:"+[*]* -[FluentAssertions*]* -[*]System.Diagnostics.Contracts.*"
+& $openCoverPath -target:$nUnitPath -targetargs:"$nUnitArgs" -register:user -output:CoverageReport/coverage.xml -skipautoprops -filter:'+[*]* -[FluentAssertions*]* -[*]System.Diagnostics.Contracts.*'
 
 Write-Host "[Debug] Generating coverage report"
 & $reportGeneratorPath -reports:CoverageReport/coverage.xml -targetdir:CoverageReport
