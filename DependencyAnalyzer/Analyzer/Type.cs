@@ -34,6 +34,7 @@ namespace Analyzer
 
         public TypeDefinition TypeDefinition => type;
 
+        [Pure]
         public TypeReferenceCount GetReferencedTypes()
         {
             var types = new TypeReferenceCount
@@ -46,18 +47,20 @@ namespace Analyzer
             return types;
         }
 
+        [Pure]
         public TypeReferenceCount GetBaseTypes()
         {
             var walker = new BaseTypeWalker(this, cache);
             return walker.GetBaseTypes();
         }
 
+        [Pure]
         public IEnumerable<Method> GetMethods()
         {
             return type.Methods.Select(m => new Method(m, cache));
         }
 
-
+        [Pure]
         public TypeReferenceCount GetTypesReferencedByMethods()
         {
             var types = new TypeReferenceCount();
@@ -73,6 +76,7 @@ namespace Analyzer
             return types;
         }
 
+        [Pure]
         public IEnumerable<IAssembly> GetUsedAssemblies()
         {
             var assemblies = new HashSet<IAssembly>(new Assembly.AssemblyEqualityComparer());
@@ -86,15 +90,19 @@ namespace Analyzer
             return assemblies;
         }
 
+        [Pure]
         public IAssembly Assembly => new Assembly(type.Module, cache);
 
+        [Pure]
         public string FullName => type.FullName;
 
+        [Pure]
         public bool Equals(IType other)
         {
             return FullName == other.FullName;
         }
 
+        [Pure]
         public override bool Equals(object obj)
         {
             if (obj is IType)
@@ -106,16 +114,19 @@ namespace Analyzer
             return base.Equals(obj);
         }
 
+        [Pure]
         public override int GetHashCode()
         {
             return type.FullName.GetHashCode();
         }
 
+        [Pure]
         public override string ToString()
         {
             return $"Name: {FullName}";
         }
 
+        [Pure]
         public class TypeEqualityComparer : IEqualityComparer<IType>
         {
             public bool Equals(IType x, IType y)

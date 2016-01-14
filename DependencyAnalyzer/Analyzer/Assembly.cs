@@ -85,11 +85,13 @@ namespace Analyzer
             module = asm.MainModule;
         }
 
+        [Pure]
         public ModuleDefinition Module => module;
 
         /// <summary>
         /// Returns the assembly names referenced directly by the current assembly
         /// </summary>
+        [Pure]
         public IEnumerable<IAssembly> References
         {
             get
@@ -112,6 +114,7 @@ namespace Analyzer
             }
         }
 
+        [Pure]
         public string FullyQualifiedName => module.FullyQualifiedName;
 
         /// <summary>
@@ -119,12 +122,14 @@ namespace Analyzer
         /// </summary>
         /// <param name="recursionLimit">Recursion limit of the operation</param>
         /// <returns></returns>
+        [Pure]
         public ReturnTypes.AsmReference GetReferences(uint recursionLimit = uint.MaxValue)
         {
             referenceWalker.RecursionLimit = recursionLimit;
             return referenceWalker.References;
         }
 
+        [Pure]
         public IEnumerable<IType> GetTypes()
         {
             var types = module.GetTypes();
@@ -134,6 +139,7 @@ namespace Analyzer
             }
         }
 
+        [Pure]
         public string Name
         {
             get
@@ -143,16 +149,19 @@ namespace Analyzer
             }
         }
 
+        [Pure]
         public bool Equals(IAssembly other)
         {
             return module.FullyQualifiedName == other.Module.FullyQualifiedName;
         }
 
+        [Pure]
         public override string ToString()
         {
             return $"Name: {Module.FullyQualifiedName}";
         }
 
+        [Pure]
         public static bool IsAssembly(string path, out Exception exception)
         {
             Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(path));
@@ -181,6 +190,7 @@ namespace Analyzer
             }
         }
 
+        [Pure]
         public class AssemblyEqualityComparer : IEqualityComparer<IAssembly>
         {
             public bool Equals(IAssembly x, IAssembly y)

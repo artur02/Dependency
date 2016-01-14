@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using Analyzer.ReturnTypes;
 using log4net;
 using Mono.Cecil;
@@ -12,8 +13,8 @@ namespace Analyzer
     public class Method
     {
         readonly MethodDefinition method;
-        ComponentCache cache;
-        private ILog logger = LogManager.GetLogger(typeof(Method));
+        readonly ComponentCache cache;
+        private readonly ILog logger = LogManager.GetLogger(typeof(Method));
 
         public Method(MethodReference methodReference, ComponentCache componentCache)
         {
@@ -31,6 +32,7 @@ namespace Analyzer
         public string FullName => method.FullName;
 
 
+        [Pure]
         public TypeReferenceCount GetTypeReferences()
         {
             var types = new TypeReferenceCount();
@@ -45,6 +47,7 @@ namespace Analyzer
             return types;
         }
 
+        [Pure]
         public IEnumerable<Parameter> GetParameters()
         {
             foreach (var parameterDefinition in method.Parameters)
@@ -60,6 +63,7 @@ namespace Analyzer
             }
         }
 
+        [Pure]
         public TypeReferenceCount GetBodyReferences()
         {
             var types = new TypeReferenceCount();
