@@ -14,14 +14,14 @@ namespace Grapher
     public class AsmReferenceGraphConverter : IGraphConverter
     {
         readonly AsmReference asmReference;
-        readonly IGraphMarkup markup;
+        readonly IGraphMarkup<IAssembly> markup;
 
-        public AsmReferenceGraphConverter(AsmReference asmReference, IGraphMarkup markup = null)
+        public AsmReferenceGraphConverter(AsmReference asmReference, IGraphMarkup<IAssembly> markup = null)
         {
             Contract.Requires<ArgumentNullException>(asmReference != null);
 
             this.asmReference = asmReference;
-            this.markup = markup ?? new GraphML();
+            this.markup = markup ?? new GraphML<IAssembly>();
         }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace Grapher
         public string Convert()
         {
             var graph = CreateGraph();
-            var result = markup.Serialize(graph);
+            var result = markup.Serialize(graph, v => v.FullyQualifiedName);
 
             return result;
         }
@@ -54,8 +54,6 @@ namespace Grapher
             var graph =
                 graphDictionary.ToVertexAndEdgeListGraph(kv => kv.Value.Select(v => new SEquatableEdge<IAssembly>(kv.Key, v)));
             return graph;
-        }
-
-        
+        }        
     }
 }

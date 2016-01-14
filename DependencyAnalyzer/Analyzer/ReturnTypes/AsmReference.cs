@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace Analyzer.ReturnTypes
 {
@@ -43,6 +44,18 @@ namespace Analyzer.ReturnTypes
                 Add(assembly);
             }
         }
+
+        /// <summary>
+        /// Number of assemblies referring other assemblies
+        /// </summary>
+        [Pure]
+        public int ReferrerCount => Count;
+
+        /// <summary>
+        /// Assemblies referring other assemblies
+        /// </summary>
+        [Pure]
+        public IEnumerable<IAssembly> Referrers => Keys;
 
         public void Add(IAssembly referer)
         {
@@ -101,8 +114,6 @@ namespace Analyzer.ReturnTypes
             }
         }
 
-        public IEnumerable<IAssembly> Referrers => Keys;
-
         [Pure]
         public bool ContainsReferer(IAssembly assembly)
         {
@@ -110,9 +121,6 @@ namespace Analyzer.ReturnTypes
 
             return ContainsKey(assembly);
         }
-
-        [Pure]
-        public int ReferrerCount => Count;
 
         [ContractInvariantMethod]
         private void ObjectInvariant()

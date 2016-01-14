@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
+using Analyzer.InstructionProcessor;
+using Analyzer.InstructionProcessor.ILOperands;
 using Analyzer.ReturnTypes;
 using log4net;
 using Mono.Cecil;
-using Mono.Cecil.Cil;
 
 namespace Analyzer
 {
@@ -86,43 +87,22 @@ namespace Analyzer
                     var operand = instruction.Operand;
                     if (operand != null)
                     {
-                        if (operand is MemberReference)
+                        var operandProcessors = new IOperandType[]
                         {
-                            var op = operand as MemberReference;
-                            var dt = op.DeclaringType;
-                            if (dt != null)
-                            {
-                                types.Add(new Type(dt, cache));
-                            }
-                        }
-                        else if (operand is ParameterDefinition)
-                        {
-                            var par = operand as ParameterDefinition;
-                            var partype = par.ParameterType;
-                            types.Add(new Type(partype, cache));
-                        }
-                        else if (operand is VariableDefinition)
-                        {
-                            var vari = operand as VariableDefinition;
-                            var varitype = vari.VariableType;
+                            new MemberReferenceType(operand),
+                            new ParameterDefinitionType(operand),
+                            new VariableDefinitionType(operand),
+                            new PrimitiveType(operand), 
+                        };
 
-                            if (varitype.IsGenericParameter)
-                            {
-                                logger.Warn($"Generic parameter not processed: {varitype.FullName}");
-                            }
-                            else
-                            {
-                                types.Add(new Type(varitype, cache));
-                            }
-                        }
-                        else if (operand is sbyte || operand is byte || operand is Int32 || operand is Int64 || operand is Single)
+                        foreach (var operandProcessor in operandProcessors)
                         {
-                            //var corlib = ModuleDefinition.ReadModule(typeof(object).Module.FullyQualifiedName);
-                            var corlib = cache.ModuleCache.Resolve(typeof(object).Module.FullyQualifiedName);
-
-                            var t = operand.GetType();
-                            var tr = new TypeReference(t.Namespace, t.Name, corlib, corlib, true);
-                            types.Add(new Type(tr, cache));
+                            var type = operandProcessor.GetOperandType();
+                            if (type != null)
+                            {
+                                types.Add(type);
+                                break;
+                            }
                         }
                     }
                 }

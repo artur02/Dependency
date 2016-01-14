@@ -64,6 +64,8 @@
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>Build</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>3</CodeContractsAnalysisWarningLevel>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <CodeAnalysisRuleSet>Analyzer.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -115,6 +117,7 @@
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>%28none%29</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+    <CodeAnalysisRuleSet>Analyzer.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
@@ -148,11 +151,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="GraphWalkers\AsmReferenceWalker.cs" />
     <Compile Include="Assembly.cs" />
     <Compile Include="GraphWalkers\BaseTypeWalker.cs" />
     <Compile Include="ComponentCache.cs" />
     <Compile Include="IAssembly.cs" />
+    <Compile Include="InstructionProcessor\ILOperands\IOperandType.cs" />
+    <Compile Include="InstructionProcessor\ILOperands\MemberReferenceType.cs" />
+    <Compile Include="InstructionProcessor\ILOperands\ParameterDefinitionType.cs" />
+    <Compile Include="InstructionProcessor\ILOperands\PrimitiveType.cs" />
+    <Compile Include="InstructionProcessor\ILOperands\VariableDefinitionType.cs" />
     <Compile Include="IType.cs" />
     <Compile Include="Method.cs" />
     <Compile Include="Parameter.cs" />
@@ -163,8 +172,10 @@
     <Compile Include="Type.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Analyzer.ruleset" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

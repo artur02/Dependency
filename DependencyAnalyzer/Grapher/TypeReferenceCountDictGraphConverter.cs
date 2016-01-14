@@ -1,24 +1,31 @@
-﻿using System.IO;
-using System.Linq;
-using System.Text;
-using System.Xml;
+﻿using System.Linq;
 using Analyzer.ReturnTypes;
+using Grapher.GraphMarkup;
 using QuickGraph;
-using QuickGraph.Algorithms;
-using QuickGraph.Serialization;
 
 namespace Grapher
 {
     public class TypeReferenceCountDictGraphConverter : IGraphConverter
     {
         readonly TypeReferenceCountDict typeReferenceCountDict;
+        private readonly IGraphMarkup<IType> markup;
 
-        public TypeReferenceCountDictGraphConverter(TypeReferenceCountDict typeReferenceCountDict)
+        public TypeReferenceCountDictGraphConverter(TypeReferenceCountDict typeReferenceCountDict, IGraphMarkup<IType> markup = null)
         {
             this.typeReferenceCountDict = typeReferenceCountDict;
+            this.markup = markup;
         }
 
         public string Convert()
+        {
+            var graph2 = CreateGraph();
+
+            var result = markup.Serialize(graph2, v => v.FullName);
+
+            return result;
+        }
+
+        private DelegateVertexAndEdgeListGraph<IType, SEquatableEdge<IType>> CreateGraph()
         {
             var graphDictionary = new TypeReferenceCountDict(typeReferenceCountDict.Keys);
             foreach (var names in typeReferenceCountDict.Values.Select(v => v.Keys))
@@ -28,37 +35,15 @@ namespace Grapher
                     graphDictionary.Add(name);
                 }
             }
-            foreach (var assemby in typeReferenceCountDict)
+            foreach (var assembly in typeReferenceCountDict)
             {
-                graphDictionary[assemby.Key] = assemby.Value;
+                graphDictionary[assembly.Key] = assembly.Value;
             }
 
-            var graph2 = graphDictionary.ToVertexAndEdgeListGraph(kv => kv.Value.Select(v => new SEquatableEdge<IType>(kv.Key, v.Key)));
-
-            var result = SerializeToGraphML(graph2);
-
-            return result;
-        }
-
-        string SerializeToGraphML(DelegateVertexAndEdgeListGraph<IType, SEquatableEdge<IType>> graph)
-        {
-            string result;
-
-            using (var sw = new MemoryStream())
-            {
-                var xmlSettings = new XmlWriterSettings
-                {
-                    Encoding = new UTF8Encoding(false),
-                    Indent = true
-                };
-                using (var xw = XmlWriter.Create(sw, xmlSettings))
-                {
-                    graph.SerializeToGraphML(xw, graph.GetTypeVertexIdentity(), graph.GetEdgeIdentity());
-                }
-                result = Encoding.UTF8.GetString(sw.ToArray());
-            }
-
-            return result;
+            var graph =
+                graphDictionary.ToVertexAndEdgeListGraph(
+                    kv => kv.Value.Select(v => new SEquatableEdge<IType>(kv.Key, v.Key)));
+            return graph;
         }
     }
 }
