@@ -6,6 +6,8 @@ $testAssemblies = "AnalyzerTests\Bin\Debug\AnalyzerTests.dll"
 
 $nUnitArgs = "$testAssemblies"
 
+$coverageFilters = "+[*]* -[FluentAssertions*]* -[*]System.Diagnostics.Contracts.*"
+
 Write-Host "[Debug] Creating coverage report directory"
 
 if (!(Test-Path CoverageReport)) {
@@ -13,7 +15,7 @@ if (!(Test-Path CoverageReport)) {
 }
 
 Write-Host "[Debug] Executing OpenCover with nUnit"
-& $openCoverPath -target:$nUnitPath -targetargs:"$nUnitArgs" -register:user -output:CoverageReport/coverage.xml -skipautoprops -filter:'+[*]* -[FluentAssertions*]* -[*]System.Diagnostics.Contracts.*'
+& $openCoverPath -target:$nUnitPath -targetargs:"$nUnitArgs" -register:user -output:CoverageReport/coverage.xml -skipautoprops "-filter:$coverageFilters"
 
 Write-Host "[Debug] Generating coverage report"
 & $reportGeneratorPath -reports:CoverageReport/coverage.xml -targetdir:CoverageReport
