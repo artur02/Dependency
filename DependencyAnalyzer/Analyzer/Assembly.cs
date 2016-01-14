@@ -16,15 +16,15 @@ namespace Analyzer
         readonly ModuleDefinition module;
         readonly DefaultAssemblyResolver resolver = new DefaultAssemblyResolver();
 
-        readonly AssemblyReferenceWalker referenceWalker;
+        readonly IAssemblyReferenceWalker referenceWalker;
         readonly ComponentCache cache;
 
         private readonly ILog logger = LogManager.GetLogger(typeof (Assembly));
 
-        private Assembly(ComponentCache componentCache)
+        private Assembly(ComponentCache componentCache, IAssemblyReferenceWalker assemblyReferenceWalker = null)
         {
             cache = componentCache;
-            referenceWalker = new AssemblyReferenceWalker(this);
+            referenceWalker = assemblyReferenceWalker ?? new AssemblyReferenceWalker(this);
         }
 
         /// <summary>

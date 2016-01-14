@@ -156,6 +156,7 @@
     <Compile Include="Assembly.cs" />
     <Compile Include="GraphWalkers\BaseTypeWalker.cs" />
     <Compile Include="ComponentCache.cs" />
+    <Compile Include="GraphWalkers\IAssemblyReferenceWalker.cs" />
     <Compile Include="IAssembly.cs" />
     <Compile Include="InstructionProcessor\ILOperands\IOperandType.cs" />
     <Compile Include="InstructionProcessor\ILOperands\MemberReferenceType.cs" />

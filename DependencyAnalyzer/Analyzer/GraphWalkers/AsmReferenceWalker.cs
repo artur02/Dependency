@@ -4,7 +4,7 @@ using Analyzer.ReturnTypes;
 
 namespace Analyzer.GraphWalkers
 {
-    public class AssemblyReferenceWalker
+    public class AssemblyReferenceWalker : IAssemblyReferenceWalker
     {
         readonly IAssembly assembly;
         Lazy<AsmReference> references;
