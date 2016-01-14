@@ -55,7 +55,7 @@
     <CodeContractsLibPaths />
     <CodeContractsExtraRewriteOptions />
     <CodeContractsExtraAnalysisOptions />
-    <CodeContractsSQLServerOption />
+    <CodeContractsSQLServerOption>%28local%29</CodeContractsSQLServerOption>
     <CodeContractsBaseLineFile />
     <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
     <CodeContractsSkipAnalysisIfCannotConnectToCache>True</CodeContractsSkipAnalysisIfCannotConnectToCache>
@@ -145,6 +145,8 @@
   <ItemGroup>
     <Compile Include="AsmReferenceGraphConverter.cs" />
     <Compile Include="GraphExtensions.cs" />
+    <Compile Include="GraphMarkup\GraphML.cs" />
+    <Compile Include="GraphMarkup\IGraphMarkup.cs" />
     <Compile Include="IGraphConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TypeReferenceCountDictGraphConverter.cs" />
