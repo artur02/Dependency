@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Analyzer;
@@ -28,7 +29,7 @@ namespace AnalyzerTests
                     .Select(type => type.FullName)
                     .ShouldBeEquivalentTo(expectedTypeNames);
 
-                File.Delete(generatedAssemblyName);
+                DeleteFileIfExists(generatedAssemblyName);
             }
         }
 
@@ -49,7 +50,42 @@ namespace AnalyzerTests
                     .Select(d => d.Key.FullName)
                     .ShouldBeEquivalentTo(expectedTypeNames);
 
-                File.Delete(generatedAssemblyName);
+                DeleteFileIfExists(generatedAssemblyName);
+            }
+        }
+
+        [TestFixture]
+        public class WhenIGetAssembliesReferencedDirectlyByTheAnalyzedAssembly
+        {
+            [TestCase("SimpleMethod.cs", "GeneratedAssemblySimpleMethod.dll", new[] { "CommonLanguageRuntimeLibrary" })]
+            [TestCase("MethodWithBody.cs", "GeneratedAssemblyMethodWithBody.dll", new[] { "CommonLanguageRuntimeLibrary" })]
+            public void ThenAllReferencedAssembliesShouldBeEnumerated(string fileToBeCompiled, string generatedAssemblyName, IEnumerable<string> expectedAssemblies)
+            {
+                var assembly = GenerateAndLoadAssembly(fileToBeCompiled, generatedAssemblyName);
+                Assume.That(assembly, Is.Not.Null);
+                var references = assembly.References;
+
+                references
+                    .Select(a => a.Name)
+                    .ShouldBeEquivalentTo(expectedAssemblies );
+
+                DeleteFileIfExists(generatedAssemblyName);
+            }
+        }
+
+        [TestFixture]
+        public class WhenIWantToCheckWhetherAFileIsAnAssembly
+        {
+            [TestCase("SimpleMethod.cs", "GeneratedAssemblySimpleMethod.dll", true)]
+            [TestCase("MethodWithBody.cs", "GeneratedAssemblyMethodWithBody.dll", true)]
+            public void ThenADotNetAssemblyShouldBeRecognized(string fileToBeCompiled, string generatedAssemblyName, bool expectedResult)
+            {
+                var assembly = GenerateAndLoadAssembly(fileToBeCompiled, generatedAssemblyName);
+                Assume.That(assembly, Is.Not.Null);
+                Exception exception;
+                var result = Assembly.IsAssembly(generatedAssemblyName, out exception);
+
+                result.Should().Be(expectedResult);
             }
         }
 
@@ -67,15 +103,25 @@ namespace AnalyzerTests
 
 
 
-
         protected static Assembly GenerateAndLoadAssembly(string fileName, string generatedAssemblyName)
         {
+            DeleteFileIfExists(generatedAssemblyName);
+
             var helper = new Helper();
             helper.GenerateAssemblyAsync(System.Reflection.Assembly.GetExecutingAssembly(),
                 "AnalyzerTests.TestCodes", fileName, generatedAssemblyName);
             var assembly = new Assembly(generatedAssemblyName, new ComponentCache());
 
             return assembly;
+        }
+
+        protected static void DeleteFileIfExists(string path)
+        {
+            var file = new FileInfo(path);
+            if (file.Exists)
+            {
+                file.Delete();
+            }
         }
     }
 }
