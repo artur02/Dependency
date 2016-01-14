@@ -1,8 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.Diagnostics.Contracts;
+using System.IO;
 using System.Linq;
 using Analyzer;
 using Analyzer.ReturnTypes;
-using Grapher;
 using Grapher.GraphConverter;
 using log4net;
 
@@ -12,8 +13,11 @@ namespace ConsoleAnalyzer
     {
         private readonly ILog logger = LogManager.GetLogger(typeof (AssemblyProcessor));
 
+        /// <exception cref="FileNotFoundException">Cannot find assembly.</exception>
         public AssemblyProcessor(string assemblyPath)
         {
+            Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(assemblyPath));
+
             logger.Debug($"Parsing assembly: {assemblyPath}");
 
             if (!File.Exists(assemblyPath))
@@ -29,10 +33,10 @@ namespace ConsoleAnalyzer
         public string GetReferencedAssembliesGraph()
         {
             var references = Assembly.GetReferences();
-            var g = new AsmReferenceGraphConverter(references);
-            var graph = g.Convert();
+            var assemblyReferenceGraph = new AsmReferenceGraphConverter(references);
+            var graphMarkup = assemblyReferenceGraph.Convert();
 
-            return graph;
+            return graphMarkup;
         }
 
         public string GetReferencedTypesGraph()
@@ -51,10 +55,10 @@ namespace ConsoleAnalyzer
                     }
                 }
             }
-            var g2 = new TypeReferenceCountDictGraphConverter(referencedTypes);
-            var graph2 = g2.Convert();
+            var typeReferenceGraph = new TypeReferenceCountDictGraphConverter(referencedTypes);
+            var graphMarkup = typeReferenceGraph.Convert();
 
-            return graph2;
+            return graphMarkup;
         }
     }
 }
