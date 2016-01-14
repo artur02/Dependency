@@ -18,12 +18,18 @@ namespace Analyzer
 
         public Method(MethodReference methodReference, ComponentCache componentCache)
         {
+            Contract.Requires<ArgumentNullException>(methodReference != null);
+            Contract.Requires<ArgumentNullException>(componentCache != null);
+
             method = methodReference.Resolve();
             cache = componentCache;
         }
 
         public Method(MethodDefinition methodDefinition, ComponentCache componentCache)
         {
+            Contract.Requires<ArgumentNullException>(methodDefinition != null);
+            Contract.Requires<ArgumentNullException>(componentCache != null);
+
             method = methodDefinition;
             cache = componentCache;
         }
@@ -68,20 +74,11 @@ namespace Analyzer
         {
             var types = new TypeReferenceCount();
 
-            if (method.Body != null)
+            if (method.HasBody && method.Body != null)
             {
-                var variables = method.Body.Variables;
-                foreach (var variableDefinition in variables)
+                foreach (var variable in GetMethodBodyVariables(method))
                 {
-                    if (variableDefinition.VariableType.IsGenericParameter ||
-                        variableDefinition.VariableType.ContainsGenericParameter)
-                    {
-                        logger.Warn($"Cannot process generic parameters: {variableDefinition.Name}");
-                    }
-                    else
-                    {
-                        types.Add(new Type(variableDefinition.VariableType, cache));
-                    }
+                    types.Add(variable);
                 }
 
                 foreach (var instruction in method.Body.Instructions)
@@ -132,6 +129,36 @@ namespace Analyzer
             }
 
             return types;
+        }
+
+        [Pure]
+        private IEnumerable<Type> GetMethodBodyVariables(MethodDefinition method)
+        {
+            Contract.Requires<ArgumentNullException>(method != null);
+
+            if (method.HasBody && method.Body.HasVariables)
+            {
+                var variables = method.Body.Variables;
+                foreach (var variableDefinition in variables)
+                {
+                    if (variableDefinition.VariableType.IsGenericParameter ||
+                        variableDefinition.VariableType.ContainsGenericParameter)
+                    {
+                        logger.Warn($"Cannot process generic parameters: {variableDefinition.Name}");
+                    }
+                    else
+                    {
+                        yield return new Type(variableDefinition.VariableType, cache);
+                    }
+                }
+            }
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(Name != null);
+            Contract.Invariant(FullName!= null);
         }
     }
 }

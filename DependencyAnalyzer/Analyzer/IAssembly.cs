@@ -86,5 +86,15 @@ namespace Analyzer
         {
             return default(bool);
         }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(!string.IsNullOrWhiteSpace(FullyQualifiedName));
+            Contract.Invariant(FullyQualifiedName != null);
+            Contract.Invariant(!string.IsNullOrWhiteSpace(Name));
+            Contract.Invariant(Module != null);
+            Contract.Invariant(References != null);
+        }
     }
 }

@@ -17,7 +17,7 @@ namespace Analyzer
         readonly DefaultAssemblyResolver resolver = new DefaultAssemblyResolver();
 
         readonly AssemblyReferenceWalker referenceWalker;
-        ComponentCache cache;
+        readonly ComponentCache cache;
 
         private readonly ILog logger = LogManager.GetLogger(typeof (Assembly));
 
@@ -98,15 +98,18 @@ namespace Analyzer
             {
                 var assemblies = new List<IAssembly>();
 
-                foreach (var reference in module.AssemblyReferences)
+                if (module.AssemblyReferences != null)
                 {
-                    try
+                    foreach (var reference in module.AssemblyReferences)
                     {
-                        assemblies.Add(new Assembly(reference, resolver.GetSearchDirectories(), cache));
-                    }
-                    catch (Exception exception)
-                    {
-                        logger.Warn($"Failed processing assembly reference: {reference?.FullName}", exception);
+                        try
+                        {
+                            assemblies.Add(new Assembly(reference, resolver.GetSearchDirectories(), cache));
+                        }
+                        catch (Exception exception)
+                        {
+                            logger.Warn($"Failed processing assembly reference: {reference?.FullName}", exception);
+                        }
                     }
                 }
 
@@ -140,18 +143,12 @@ namespace Analyzer
         }
 
         [Pure]
-        public string Name
-        {
-            get
-            {
-                var moduleName = Path.GetFileNameWithoutExtension(module.Name);
-                return moduleName;
-            }
-        }
+        public string Name => Path.GetFileNameWithoutExtension(module.Name);
 
         [Pure]
         public bool Equals(IAssembly other)
         {
+
             return module.FullyQualifiedName == other.Module.FullyQualifiedName;
         }
 
@@ -188,6 +185,13 @@ namespace Analyzer
                 exception = null;
                 return true;
             }
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(Name != null);
+            Contract.Invariant(FullyQualifiedName != null);
         }
 
         [Pure]

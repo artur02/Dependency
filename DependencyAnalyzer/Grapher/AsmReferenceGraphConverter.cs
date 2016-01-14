@@ -1,25 +1,42 @@
-﻿using System.IO;
+﻿using System;
+using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Text;
-using System.Xml;
 using Analyzer;
 using Analyzer.ReturnTypes;
+using Grapher.GraphMarkup;
 using QuickGraph;
-using QuickGraph.Algorithms;
-using QuickGraph.Serialization;
 
 namespace Grapher
 {
+    /// <summary>
+    /// Assembly reference to graph converter
+    /// </summary>
     public class AsmReferenceGraphConverter : IGraphConverter
     {
         readonly AsmReference asmReference;
+        readonly IGraphMarkup markup;
 
-        public AsmReferenceGraphConverter(AsmReference asmReference)
+        public AsmReferenceGraphConverter(AsmReference asmReference, IGraphMarkup markup = null)
         {
+            Contract.Requires<ArgumentNullException>(asmReference != null);
+
             this.asmReference = asmReference;
+            this.markup = markup ?? new GraphML();
         }
 
+        /// <summary>
+        /// Converts an assembly reference to GraphML representation
+        /// </summary>
+        /// <returns>GraphML markup</returns>
         public string Convert()
+        {
+            var graph = CreateGraph();
+            var result = markup.Serialize(graph);
+
+            return result;
+        }
+
+        private DelegateVertexAndEdgeListGraph<IAssembly, SEquatableEdge<IAssembly>> CreateGraph()
         {
             var graphDictionary = new AsmReference(asmReference.Keys);
             foreach (var names in asmReference.Values)
@@ -29,39 +46,16 @@ namespace Grapher
                     graphDictionary.Add(name);
                 }
             }
-            foreach (var assemby in asmReference)
+            foreach (var assembly in asmReference)
             {
-                graphDictionary[assemby.Key] = assemby.Value;
+                graphDictionary[assembly.Key] = assembly.Value;
             }
 
-            var graph = graphDictionary.ToVertexAndEdgeListGraph(kv => kv.Value.Select(v => new SEquatableEdge<IAssembly>(kv.Key, v)));
-
-            var result = SerializeToGraphML(graph);
-
-            return result;
+            var graph =
+                graphDictionary.ToVertexAndEdgeListGraph(kv => kv.Value.Select(v => new SEquatableEdge<IAssembly>(kv.Key, v)));
+            return graph;
         }
 
-        string SerializeToGraphML(DelegateVertexAndEdgeListGraph<IAssembly, SEquatableEdge<IAssembly>> graph)
-        {
-            string result;
-
-            using (var memoryStream = new MemoryStream())
-            {
-
-                var xmlSettings = new XmlWriterSettings
-                {
-                    Encoding = new UTF8Encoding(false),
-                    Indent = true
-                };
-                using (var xmlWriter = XmlWriter.Create(memoryStream, xmlSettings))
-                {
-                    graph.SerializeToGraphML(xmlWriter, graph.GetAssemblyVertexIdentity(), graph.GetEdgeIdentity());
-                }
-                result = Encoding.UTF8.GetString(memoryStream.ToArray());
-
-            }
-
-            return result;
-        }
+        
     }
 }

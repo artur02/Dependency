@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 
 namespace Analyzer.ReturnTypes
 {
@@ -11,6 +12,8 @@ namespace Analyzer.ReturnTypes
 
         public TypeReferenceCountDict(IEnumerable<IType> types)
         {
+            Contract.Requires<ArgumentNullException>(types != null);
+
             foreach (var type in types)
             {
                 Add(type);
@@ -19,6 +22,8 @@ namespace Analyzer.ReturnTypes
 
         public void Add(IType referer)
         {
+            Contract.Requires<ArgumentNullException>(referer != null);
+
             if (!ContainsKey(referer))
             {
                 Add(referer, new TypeReferenceCount());

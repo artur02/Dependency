@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using Analyzer.ReturnTypes;
 using Mono.Cecil;
 
@@ -8,14 +10,18 @@ namespace Analyzer.GraphWalkers
     public class BaseTypeWalker
     {
         readonly TypeDefinition type;
-        ComponentCache cache;
+        readonly ComponentCache cache;
 
         public BaseTypeWalker(IType type, ComponentCache componentCache)
         {
+            Contract.Requires<ArgumentNullException>(type != null);
+            Contract.Requires<ArgumentNullException>(componentCache != null);
+
             this.type = type.TypeDefinition;
             cache = componentCache;
         }
 
+        [Pure]
         public TypeReferenceCount GetBaseTypes()
         {
             var types = new TypeReferenceCount
@@ -27,6 +33,7 @@ namespace Analyzer.GraphWalkers
             return types;
         }
 
+        [Pure]
         public TypeReferenceCount GetBaseClasses()
         {
             var types = new TypeReferenceCount();
@@ -38,13 +45,19 @@ namespace Analyzer.GraphWalkers
             return types;
         }
 
+        [Pure]
         public TypeReferenceCount GetInterfaces()
         {
             var types = new TypeReferenceCount();
-            foreach (var interf in type.Interfaces)
+
+            if (type.Interfaces != null)
             {
-                types.Add(new Type(interf, cache));
+                foreach (var @interface in type.Interfaces)
+                {
+                    types.Add(new Type(@interface, cache));
+                }
             }
+
             return types;
         }
     }

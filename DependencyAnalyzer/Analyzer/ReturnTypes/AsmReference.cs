@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 
 namespace Analyzer.ReturnTypes
@@ -23,6 +24,8 @@ namespace Analyzer.ReturnTypes
         public AsmReference(AsmReference assemblyReference)
             : this()
         {
+            Contract.Requires<ArgumentNullException>(assemblyReference != null);
+
             Add(assemblyReference);
         }
 
@@ -33,6 +36,8 @@ namespace Analyzer.ReturnTypes
         public AsmReference(IEnumerable<IAssembly> assemblies)
             : this()
         {
+            Contract.Requires<ArgumentNullException>(assemblies != null);
+
             foreach (var assembly in assemblies)
             {
                 Add(assembly);
@@ -41,6 +46,8 @@ namespace Analyzer.ReturnTypes
 
         public void Add(IAssembly referer)
         {
+            Contract.Requires<ArgumentNullException>(referer != null);
+
             if (!ContainsKey(referer))
             {
                 Add(referer, new HashSet<IAssembly>(new Assembly.AssemblyEqualityComparer()));
@@ -49,6 +56,9 @@ namespace Analyzer.ReturnTypes
 
         public void Add(IAssembly referer, IAssembly referenced)
         {
+            Contract.Requires<ArgumentNullException>(referer != null);
+            Contract.Requires<ArgumentNullException>(referenced != null);
+
             if (!ContainsKey(referer))
             {
                 Add(referer, new HashSet<IAssembly>(new Assembly.AssemblyEqualityComparer())
@@ -64,6 +74,9 @@ namespace Analyzer.ReturnTypes
 
         public void Add(IAssembly referer, IEnumerable<IAssembly> referenced)
         {
+            Contract.Requires<ArgumentNullException>(referer != null);
+            Contract.Requires<ArgumentNullException>(referenced != null);
+
             if (!ContainsKey(referer))
             {
                 base.Add(referer, new HashSet<IAssembly>(referenced, new Assembly.AssemblyEqualityComparer()));
@@ -79,6 +92,8 @@ namespace Analyzer.ReturnTypes
 
         public void Add(AsmReference assemblyReference)
         {
+            Contract.Requires<ArgumentNullException>(assemblyReference != null);
+
             var references = assemblyReference.ToList();
             foreach (var reference in references)
             {
@@ -86,13 +101,24 @@ namespace Analyzer.ReturnTypes
             }
         }
 
-        public IEnumerable<IAssembly> Referers => Keys;
+        public IEnumerable<IAssembly> Referrers => Keys;
 
+        [Pure]
         public bool ContainsReferer(IAssembly assembly)
         {
+            Contract.Requires<ArgumentNullException>(assembly != null);
+
             return ContainsKey(assembly);
         }
 
-        public int RefererCount => Count;
+        [Pure]
+        public int ReferrerCount => Count;
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(ReferrerCount >= 0);
+            Contract.Invariant(Referrers != null);
+        }
     }
 }

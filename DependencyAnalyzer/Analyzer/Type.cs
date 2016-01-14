@@ -13,7 +13,7 @@ namespace Analyzer
     public class Type : IEquatable<IType>, IType
     {
         readonly TypeDefinition type;
-        ComponentCache cache;
+        readonly ComponentCache cache;
 
         public Type(TypeDefinition type, ComponentCache componentCache)
         {
@@ -115,15 +115,18 @@ namespace Analyzer
         }
 
         [Pure]
-        public override int GetHashCode()
-        {
-            return type.FullName.GetHashCode();
-        }
+        public override int GetHashCode() => type.FullName.GetHashCode();
 
         [Pure]
         public override string ToString()
         {
             return $"Name: {FullName}";
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(FullName != null);
         }
 
         [Pure]
