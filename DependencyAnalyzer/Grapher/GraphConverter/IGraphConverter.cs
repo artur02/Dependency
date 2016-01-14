@@ -1,4 +1,4 @@
-﻿namespace Grapher
+﻿namespace Grapher.GraphConverter
 {
     public interface IGraphConverter
     {

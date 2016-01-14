@@ -143,13 +143,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AsmReferenceGraphConverter.cs" />
-    <Compile Include="GraphExtensions.cs" />
+    <Compile Include="GraphConverter\AsmReferenceGraphConverter.cs" />
     <Compile Include="GraphMarkup\GraphML.cs" />
     <Compile Include="GraphMarkup\IGraphMarkup.cs" />
-    <Compile Include="IGraphConverter.cs" />
+    <Compile Include="GraphConverter\IGraphConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TypeReferenceCountDictGraphConverter.cs" />
+    <Compile Include="GraphConverter\TypeReferenceCountDictGraphConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Analyzer\Analyzer.csproj">

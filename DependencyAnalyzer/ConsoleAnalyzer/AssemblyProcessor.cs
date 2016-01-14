@@ -3,6 +3,7 @@ using System.Linq;
 using Analyzer;
 using Analyzer.ReturnTypes;
 using Grapher;
+using Grapher.GraphConverter;
 using log4net;
 
 namespace ConsoleAnalyzer

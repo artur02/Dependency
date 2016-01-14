@@ -3,7 +3,7 @@ using Analyzer.ReturnTypes;
 using Grapher.GraphMarkup;
 using QuickGraph;
 
-namespace Grapher
+namespace Grapher.GraphConverter
 {
     public class TypeReferenceCountDictGraphConverter : IGraphConverter
     {
@@ -18,9 +18,8 @@ namespace Grapher
 
         public string Convert()
         {
-            var graph2 = CreateGraph();
-
-            var result = markup.Serialize(graph2, v => v.FullName);
+            var graph = CreateGraph();
+            var result = markup.Serialize(graph, v => v.FullName);
 
             return result;
         }

@@ -6,7 +6,7 @@ using Analyzer.ReturnTypes;
 using Grapher.GraphMarkup;
 using QuickGraph;
 
-namespace Grapher
+namespace Grapher.GraphConverter
 {
     /// <summary>
     /// Assembly reference to graph converter

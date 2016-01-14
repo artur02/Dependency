@@ -14,6 +14,7 @@ namespace Grapher.GraphMarkup
         /// Serializes graph into a graph representation markup
         /// </summary>
         /// <param name="graph">Graph representation</param>
+        /// <param name="vertexIdentity">The function that returns the identity property of the current vertex (e.g. Name)</param>
         /// <returns>Graph representation markup</returns>
         string Serialize(DelegateVertexAndEdgeListGraph<T, SEquatableEdge<T>> graph, VertexIdentity<T> vertexIdentity);
     }
@@ -28,6 +29,7 @@ namespace Grapher.GraphMarkup
         /// Serializes graph into a graph representation markup
         /// </summary>
         /// <param name="graph">Graph representation</param>
+        /// <param name="vertexIdentity">The function that returns the identity property of the current vertex (e.g. Name)</param>
         /// <returns>Graph representation markup</returns>
         public string Serialize(DelegateVertexAndEdgeListGraph<T, SEquatableEdge<T>> graph, VertexIdentity<T> vertexIdentity)
         {
