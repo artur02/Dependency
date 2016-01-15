@@ -21,9 +21,9 @@ namespace Analyzer
 
         private readonly ILog logger = LogManager.GetLogger(typeof (Assembly));
 
-        private Assembly(ComponentCache componentCache, IAssemblyReferenceWalker assemblyReferenceWalker = null)
+        private Assembly(ComponentCache componentCache, IAssemblyReferenceWalker assemblyReferenceWalker)
         {
-            cache = componentCache;
+            cache = componentCache ?? new ComponentCache();
             referenceWalker = assemblyReferenceWalker ?? new AssemblyReferenceWalker(this);
         }
 
@@ -31,8 +31,8 @@ namespace Analyzer
         /// Creates a new instance of the Assembly class
         /// </summary>
         /// <param name="path">File path to the assembly</param>
-        public Assembly(string path, ComponentCache componentCache)
-            : this(componentCache)
+        public Assembly(string path, ComponentCache componentCache = null, IAssemblyReferenceWalker assemblyReferenceWalker = null)
+            : this(componentCache, assemblyReferenceWalker)
         {
             Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(path));
             Contract.Requires<ArgumentException>(File.Exists(path));
@@ -45,8 +45,8 @@ namespace Analyzer
         /// Creates a new instance of the Assembly class
         /// </summary>
         /// <param name="assemblyName">Assembly name</param>
-        public Assembly(AssemblyNameReference assemblyName, ComponentCache componentCache)
-            : this(componentCache)
+        public Assembly(AssemblyNameReference assemblyName, ComponentCache componentCache = null, IAssemblyReferenceWalker assemblyReferenceWalker = null)
+            : this(componentCache, assemblyReferenceWalker)
         {
             Contract.Requires<ArgumentNullException>(assemblyName != null);
             Contract.Ensures(module != null);
@@ -55,8 +55,8 @@ namespace Analyzer
             module = asm.MainModule;
         }
 
-        public Assembly(ModuleDefinition assembly, ComponentCache componentCache)
-            : this(componentCache)
+        public Assembly(ModuleDefinition assembly, ComponentCache componentCache = null, IAssemblyReferenceWalker assemblyReferenceWalker = null)
+            : this(componentCache, assemblyReferenceWalker)
         {
             Contract.Requires<ArgumentNullException>(assembly != null);
             Contract.Ensures(module != null);
@@ -69,9 +69,9 @@ namespace Analyzer
         /// </summary>
         /// <param name="assemblyName">Assembly name</param>
         /// <param name="searchDirectories">Search directories</param>
-        public Assembly(AssemblyNameReference assemblyName, IEnumerable<string> searchDirectories, ComponentCache componentCache)
+        public Assembly(AssemblyNameReference assemblyName, IEnumerable<string> searchDirectories, ComponentCache componentCache = null, IAssemblyReferenceWalker assemblyReferenceWalker = null)
+            : this(componentCache, assemblyReferenceWalker)
         {
-            cache = componentCache;
             Contract.Requires<ArgumentNullException>(assemblyName != null);
             Contract.Requires<ArgumentNullException>(searchDirectories != null);
             Contract.Requires(Contract.ForAll(searchDirectories, d => d != null));
@@ -117,6 +117,9 @@ namespace Analyzer
             }
         }
 
+        /// <summary>
+        /// The fully qualified name of the assembly
+        /// </summary>
         [Pure]
         public string FullyQualifiedName => module.FullyQualifiedName;
 
@@ -132,6 +135,10 @@ namespace Analyzer
             return referenceWalker.References;
         }
 
+        /// <summary>
+        /// Returns the types defined in the assembly
+        /// </summary>
+        /// <returns>The enumeration of the published types</returns>
         [Pure]
         public IEnumerable<IType> GetTypes()
         {
@@ -142,9 +149,17 @@ namespace Analyzer
             }
         }
 
+        /// <summary>
+        /// The nsmae of the assembly
+        /// </summary>
         [Pure]
         public string Name => Path.GetFileNameWithoutExtension(module.Name);
 
+        /// <summary>
+        /// Determines if two assemblies are the same
+        /// </summary>
+        /// <param name="other">The other assembly</param>
+        /// <returns></returns>
         [Pure]
         public bool Equals(IAssembly other)
         {
@@ -152,6 +167,10 @@ namespace Analyzer
             return module.FullyQualifiedName == other.Module.FullyQualifiedName;
         }
 
+        /// <summary>
+        /// The description of the assembly
+        /// </summary>
+        /// <returns>The description.</returns>
         [Pure]
         public override string ToString()
         {

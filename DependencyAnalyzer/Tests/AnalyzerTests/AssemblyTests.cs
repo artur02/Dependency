@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Analyzer;
+using Analyzer.GraphWalkers;
+using Analyzer.ReturnTypes;
 using FluentAssertions;
+using NSubstitute;
 using NUnit.Framework;
 using TestHelpers;
 
@@ -86,6 +89,115 @@ namespace AnalyzerTests
                 var result = Assembly.IsAssembly(generatedAssemblyName, out exception);
 
                 result.Should().Be(expectedResult);
+
+                DeleteFileIfExists(generatedAssemblyName);
+            }
+        }
+
+        [TestFixture]
+        public class WhenIGetAssembliesReferencedDirectlyOrIndirectlyByTheAnalyzedAssembly
+        {
+            static string generatedAssemblyName = "GeneratedAssemblyMethodWithBody.dll";
+
+            IAssembly assembly;
+            IAssemblyReferenceWalker assemblyReferenceWalker;
+
+            [SetUp]
+            public void Setup()
+            {
+                assemblyReferenceWalker = Substitute.For<IAssemblyReferenceWalker>();
+                assemblyReferenceWalker.References.Returns(new AsmReference());
+
+
+                DeleteFileIfExists(generatedAssemblyName);
+
+                var helper = new Helper();
+                helper.GenerateAssemblyAsync(System.Reflection.Assembly.GetExecutingAssembly(),
+                    "AnalyzerTests.TestCodes", "SimpleMethod.cs", generatedAssemblyName);
+                assembly = new Assembly(generatedAssemblyName, assemblyReferenceWalker: assemblyReferenceWalker);
+            }
+
+            [TearDown]
+            public void TearDown()
+            {
+                DeleteFileIfExists(generatedAssemblyName);
+            }
+
+            [Test]
+            public void ThenTheRecursionLimitShouldBePropagated()
+            {
+                var result = assembly.GetReferences(5);
+
+                assemblyReferenceWalker
+                    .Received()
+                    .RecursionLimit = 5;
+            }
+
+            [Test]
+            public void ThenAnAssemblyReferenceWalkerShouldBeUsedForBuildingTheReferenceGraph()
+            {
+                var result = assembly.GetReferences(5);
+
+                var temp = assemblyReferenceWalker
+                    .Received()
+                    .References;
+            }
+        }
+
+        [TestFixture]
+        public class WhenICompareTwoAssemblies
+        {
+            const string GeneratedAssemblyName1 = "GeneratedAssemblySimpleMethod1.dll";
+            const string GeneratedAssemblyName2 = "GeneratedAssemblySimpleMethod2.dll";
+
+            [TearDown]
+            public void TearDown()
+            {
+                DeleteFileIfExists(GeneratedAssemblyName1);
+                DeleteFileIfExists(GeneratedAssemblyName2);
+            }
+
+            [Test]
+            public void ThenTheAssembliesShouldBeMatchedIfTheSignificantPropertiesAreSimilar()
+            {
+                var assembly1 = GenerateAndLoadAssembly("SimpleMethod.cs", GeneratedAssemblyName1);
+
+                assembly1.Equals(assembly1).Should().BeTrue();
+            }
+
+            [Test]
+            public void ThenTheAssembliesShouldNotBeMatchedIfTheSignificantPropertiesAreDifferent()
+            {
+                var assembly1 = GenerateAndLoadAssembly("SimpleMethod.cs", GeneratedAssemblyName1);
+                var assembly2 = GenerateAndLoadAssembly("SimpleMethod.cs", GeneratedAssemblyName2);
+
+                assembly1.Equals(assembly2).Should().BeFalse();
+            }
+
+            [Test]
+            public void ThenTheAssembliesShouldBeMatchedByTheEqualityComparerIfTheSignificantPropertiesAreSimilar()
+            {
+                var assembly1 = GenerateAndLoadAssembly("SimpleMethod.cs", GeneratedAssemblyName1);
+
+                var assemblyHashSet = new HashSet<IAssembly>(comparer: new Assembly.AssemblyEqualityComparer()) { assembly1};
+
+                assemblyHashSet
+                    .Contains(assembly1)
+                    .Should().BeTrue();
+
+            }
+
+            [Test]
+            public void ThenTheAssembliesShouldNotBeMatchedByTheEqualityComparerIfTheSignificantPropertiesAreDifferent()
+            {
+                var assembly1 = GenerateAndLoadAssembly("SimpleMethod.cs", GeneratedAssemblyName1);
+                var assembly2 = GenerateAndLoadAssembly("SimpleMethod.cs", GeneratedAssemblyName2);
+
+                var assemblyHashSet = new HashSet<IAssembly>(comparer: new Assembly.AssemblyEqualityComparer()) { assembly1 };
+
+                assemblyHashSet
+                    .Contains(assembly2)
+                    .Should().BeFalse();
             }
         }
 

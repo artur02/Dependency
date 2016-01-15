@@ -163,6 +163,7 @@
     <Compile Include="InstructionProcessor\ILOperands\ParameterDefinitionType.cs" />
     <Compile Include="InstructionProcessor\ILOperands\PrimitiveType.cs" />
     <Compile Include="InstructionProcessor\ILOperands\VariableDefinitionType.cs" />
+    <Compile Include="IReferenceWalker.cs" />
     <Compile Include="IType.cs" />
     <Compile Include="Method.cs" />
     <Compile Include="Parameter.cs" />

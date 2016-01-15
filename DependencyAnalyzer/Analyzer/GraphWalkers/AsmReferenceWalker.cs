@@ -39,13 +39,7 @@ namespace Analyzer.GraphWalkers
             }
         }
 
-        public AsmReference References
-        {
-            get
-            {
-                return references.Value;
-            }
-        }
+        public AsmReference References => references.Value;
 
         private AsmReference GetReferences(IAssembly currentAssembly, AsmReference referenceDictionary, uint currentRecursionLimit = uint.MaxValue)
         {
