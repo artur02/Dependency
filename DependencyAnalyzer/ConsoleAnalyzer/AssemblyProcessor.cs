@@ -11,11 +11,13 @@ namespace ConsoleAnalyzer
 {
     public class AssemblyProcessor
     {
+        readonly uint recursionLimit;
         private readonly ILog logger = LogManager.GetLogger(typeof (AssemblyProcessor));
 
         /// <exception cref="FileNotFoundException">Cannot find assembly.</exception>
-        public AssemblyProcessor(string assemblyPath)
+        public AssemblyProcessor(string assemblyPath, uint recursionLimit = uint.MaxValue)
         {
+            this.recursionLimit = recursionLimit;
             Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(assemblyPath));
 
             logger.Debug($"Parsing assembly: {assemblyPath}");
@@ -32,7 +34,7 @@ namespace ConsoleAnalyzer
 
         public string GetReferencedAssembliesGraph()
         {
-            var references = Assembly.GetReferences();
+            var references = Assembly.GetReferences(recursionLimit);
             var assemblyReferenceGraph = new AsmReferenceGraphConverter(references);
             var graphMarkup = assemblyReferenceGraph.Convert();
 

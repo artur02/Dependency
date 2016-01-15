@@ -7,14 +7,14 @@ namespace ConsoleAnalyzer
 {
     class Program
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof (Program));
+        static readonly ILog Logger = LogManager.GetLogger(typeof (Program));
 
         static void Main(string[] args)
         {
             var result = Parser.Default.ParseArguments<DependecyOptions, AssemblyAnalyzerOptions>(args)
                 .WithParsed<DependecyOptions>(options =>
                 {
-                    var assemblyProcessor = new AssemblyProcessor(options.Path);
+                    var assemblyProcessor = new AssemblyProcessor(options.Path, options.RecursionLimit);
                     ProcessAssemblyGraph(options, assemblyProcessor);
                     ProcessTypeGraph(options, assemblyProcessor);
 
@@ -43,7 +43,7 @@ namespace ConsoleAnalyzer
                 });
         }
 
-        private static void ProcessTypeGraph(DependecyOptions options, AssemblyProcessor assemblyProcessor)
+        static void ProcessTypeGraph(DependecyOptions options, AssemblyProcessor assemblyProcessor)
         {
             if (options.GenerateTypeGraph)
             {

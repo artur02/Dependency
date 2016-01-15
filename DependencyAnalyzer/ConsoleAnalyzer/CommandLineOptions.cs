@@ -19,6 +19,9 @@ namespace ConsoleAnalyzer
 
         [Option("typegraphfile", Default = "graph_type.graphml", HelpText = "File name of the generated type graph")]
         public string TypeGraphFileName { get; set; }
+
+        [Option('r', "recursion", Default = uint.MaxValue, HelpText = "The maximum number of recursion steps executed when generating the graph")]
+        public uint RecursionLimit { get; set; }
     }
 
     [Verb("asm", HelpText = "Assembly analysis")]
