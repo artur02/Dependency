@@ -10,6 +10,9 @@ using Mono.Cecil;
 
 namespace Analyzer
 {
+    /// <summary>
+    /// A .NET assembly that can be analyzed
+    /// </summary>
     [DebuggerDisplay("{FullyQualifiedName}")]
     public class Assembly : IEquatable<IAssembly>, IAssembly
     {

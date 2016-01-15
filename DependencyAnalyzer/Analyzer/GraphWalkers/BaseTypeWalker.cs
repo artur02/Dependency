@@ -7,18 +7,30 @@ using Mono.Cecil;
 namespace Analyzer.GraphWalkers
 {
     [DebuggerDisplay("{type}")]
-    public class BaseTypeWalker
+    public class BaseTypeWalker : IBaseTypeWalker
     {
         readonly TypeDefinition type;
         readonly ComponentCache cache;
 
-        public BaseTypeWalker(IType type, ComponentCache componentCache)
+        BaseTypeWalker(ComponentCache componentCache)
+        {
+            cache = componentCache ?? new ComponentCache();
+        }
+
+        public BaseTypeWalker(TypeDefinition typeDefinition, ComponentCache componentCache = null)
+            : this(componentCache)
+        {
+            Contract.Requires<ArgumentNullException>(typeDefinition != null);
+
+            type = typeDefinition;
+        }
+
+        public BaseTypeWalker(IType type, ComponentCache componentCache = null)
+            : this(componentCache)
         {
             Contract.Requires<ArgumentNullException>(type != null);
-            Contract.Requires<ArgumentNullException>(componentCache != null);
 
             this.type = type.TypeDefinition;
-            cache = componentCache;
         }
 
         [Pure]

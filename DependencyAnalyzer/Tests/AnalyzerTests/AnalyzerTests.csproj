@@ -78,6 +78,7 @@
   <ItemGroup>
     <Compile Include="AssemblyTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TypeTests.cs" />
     <EmbeddedResource Include="TestCodes\MethodWithBody.cs" />
     <EmbeddedResource Include="TestCodes\SimpleMethod.cs" />
   </ItemGroup>

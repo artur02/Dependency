@@ -9,27 +9,32 @@ using Mono.Cecil;
 
 namespace Analyzer
 {
+    /// <summary>
+    /// A .NET tye that can be analyzed
+    /// </summary>
     [DebuggerDisplay("{FullName}")]
     public class Type : IEquatable<IType>, IType
     {
+        readonly IBaseTypeWalker baseTypeWalker;
         readonly TypeDefinition type;
         readonly ComponentCache cache;
 
-        public Type(TypeDefinition type, ComponentCache componentCache)
-        {
-            Contract.Requires(type != null);
-
-            this.type = type;
-            cache = componentCache;
-        }
-
-        public Type(TypeReference type, ComponentCache componentCache)
+        public Type(TypeDefinition type, ComponentCache componentCache = null, IBaseTypeWalker baseTypeWalker = null)
         {
             Contract.Requires(type != null);
             Contract.Ensures(this.type != null);
+            Contract.Ensures(this.baseTypeWalker != null);
+            Contract.Ensures(this.cache != null);
 
-            this.type = type.Resolve();
-            cache = componentCache;
+            cache = componentCache ?? new ComponentCache();
+            this.type = type;
+            this.baseTypeWalker = baseTypeWalker ?? new BaseTypeWalker(type, componentCache);
+        }
+
+        public Type(TypeReference type, ComponentCache componentCache = null, IBaseTypeWalker baseTypeWalker = null)
+            :this(type.Resolve(), componentCache, baseTypeWalker)
+        {
+            Contract.Requires(type != null);
         }
 
         public TypeDefinition TypeDefinition => type;
@@ -50,8 +55,7 @@ namespace Analyzer
         [Pure]
         public TypeReferenceCount GetBaseTypes()
         {
-            var walker = new BaseTypeWalker(this, cache);
-            return walker.GetBaseTypes();
+            return baseTypeWalker.GetBaseTypes();
         }
 
         [Pure]
