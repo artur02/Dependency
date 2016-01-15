@@ -8,6 +8,9 @@
 .NET dependency analyzer is a simple tool to discover type and assembly reference 
 dependency chains in compiled .NET assemblies.
 
+## How can I get binaries?
+You can find the latest debug build at [AppVeyor contnuous integration platform](https://ci.appveyor.com/project/artur02/dependency/build/artifacts)
+
 ### Command line options
 
     >ConsoleAnalyzer
